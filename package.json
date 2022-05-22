@@ -1,0 +1,19 @@
+{
+  "name": "fragments-ui",
+  "private": true,
+  "version": "0.0.1",
+  "description": "fragments frontend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1jz/fragments-ui.git"
+  },
+  "author": "Philip Golovin",
+  "bugs": {
+    "url": "https://github.com/1jz/fragments-ui/issues"
+  },
+  "homepage": "https://github.com/1jz/fragments-ui#readme"
+}
