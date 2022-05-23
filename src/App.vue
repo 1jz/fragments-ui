@@ -1,104 +1,106 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import "@aws-amplify/ui-vue/styles.css";
-import { useRouter } from "vue-router";
+import { useRouter, RouterView } from "vue-router";
 import { globalUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
 import { Auth } from "aws-amplify";
 import { Authenticator } from "@aws-amplify/ui-vue";
+import "@aws-amplify/ui-vue/styles.css";
+import { getUserFragments } from "./api/api";
+import { doubleRaf } from "./utils/utils";
 
 const userStore = globalUserStore();
 const { auth, loginModal } = storeToRefs(userStore);
 
 // ======= OTHER CONF =======
 
-const route = useRouter();
-const activeIndex = ref("");
+doubleRaf(() => {
+    getUserFragments(auth.value);
+});
 
+const router = useRouter();
 const handleSelect = (key: string) => {
     if (key === "login") {
-        route.push({ name: "login" });
+        router.push({ name: "login" });
         loginModal.value = true;
     } else if (key === "logout" && auth.value) {
         Auth.signOut();
-        route.push({ name: "home" });
+        router.push({ name: "home" });
     } else {
-        route.push({ name: key });
+        router.push({ name: key });
     }
-    activeIndex.value = key;
 };
 </script>
 
 <template>
-    <el-container direction="horizontal" class="header">
-        <div class="navbar-container">
-            <el-menu
-                :default-active="activeIndex"
-                class="root-navbar"
-                mode="horizontal"
-                :ellipsis="false"
-                background-color="var(--color-background-mute)"
-                text-color="var(--color-heading)"
-                active-text-color="var(--accent-color)"
-                @select="handleSelect"
-            >
-                <el-menu-item index="home">Home</el-menu-item>
-            </el-menu>
-        </div>
-        <template v-if="auth?.authStatus === 'authenticated'">
-            <div>Logged in as {{ auth.user.username }}</div>
-        </template>
-        <div class="navbar-container">
-            <el-menu
-                class="root-navbar"
-                mode="horizontal"
-                :default-active="activeIndex"
-                :ellipsis="false"
-                background-color="var(--color-background-mute)"
-                text-color="var(--color-heading)"
-                active-text-color="var(--accent-color)"
-                @select="handleSelect"
-            >
-                <template v-if="auth?.authStatus !== 'authenticated'">
-                    <el-menu-item index="login">Login</el-menu-item>
-                </template>
-                <template v-if="auth?.authStatus === 'authenticated'">
-                    <el-menu-item index="logout">Logout</el-menu-item>
-                </template>
-            </el-menu>
-        </div>
+    <el-container class="layout-container" style="height: 100vh">
+        <el-aside class="sidebar" width="200px">
+            <el-scrollbar>
+                <el-menu @select="handleSelect" :ellipsis="false">
+                    <el-menu-item index="home">
+                        <el-icon><HomeFilled /></el-icon>
+                        <span>Home</span>
+                    </el-menu-item>
+                </el-menu>
+            </el-scrollbar>
+        </el-aside>
+
+        <el-container>
+            <el-header>
+                <div class="toolbar">
+                    <template v-if="auth.authStatus !== 'authenticated'">
+                        <el-button type="success" plain @click="handleSelect('login')">
+                            Login
+                        </el-button>
+                    </template>
+                    <template v-if="auth.authStatus === 'authenticated'">
+                        <el-dropdown split-button type="primary">
+                            {{ auth.user.username }}
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item @click="handleSelect('logout')"
+                                        >Logout</el-dropdown-item
+                                    >
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </template>
+                </div>
+            </el-header>
+
+            <el-main>
+                <RouterView />
+            </el-main>
+        </el-container>
     </el-container>
-    <RouterView />
 
     <el-dialog v-model="loginModal" width="fit-content" title="Login" center>
         <Authenticator :sign-up-attributes="['email', 'name']" />
     </el-dialog>
+
     <div style="display: none"><Authenticator /></div>
 </template>
 
 <style>
 @import "@/assets/base.css";
 
-.root-navbar {
-    border: unset;
+.sidebar {
+    border-right: solid 1px var(--el-menu-border-color);
 }
 
-.root-navbar > .el-menu-item {
-    height: 2em;
-    line-height: unset;
+ul.el-menu {
+    border-right: unset;
 }
 
-footer.el-footer {
-    height: var(--footer-height);
-    background-color: var(--color-background-mute);
+header.el-header {
+    flex-direction: column;
+    justify-content: center;
+    display: flex;
+    align-items: end;
 }
 
-.navbar-container > .el-menu {
-    --el-menu-hover-bg-color: rgba(var(--accent-colors), 0.25) !important;
-}
-
-.header {
-    justify-content: space-between;
-    background-color: var(--color-background);
+.layout-container {
+    max-width: 1280px;
+    margin: auto;
+    background-color: var(--el-bg-color-page);
 }
 </style>

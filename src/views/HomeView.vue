@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import StdContainer from "@/components/StdContainer.vue";
 import { globalUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+import { getUserFragments } from "@/api/api";
 
 const userStore = globalUserStore();
 const { auth, loginModal } = storeToRefs(userStore);
@@ -15,15 +15,11 @@ if (router.currentRoute.value.name === "login") {
 </script>
 
 <template>
-    <StdContainer>
-        <h1>Home</h1>
-        <template v-if="auth?.authStatus === 'configuring'">
-            <button @click="auth.signOut">Loading...</button>
-        </template>
-        <template v-if="auth?.authStatus === 'authenticated'">
-            <h1>Hello {{ auth.user.username }}!</h1>
-        </template>
-    </StdContainer>
+    <h1>Home</h1>
+    <template v-if="auth.authStatus === 'authenticated'">
+        <h1>Hello {{ auth.user.username }}!</h1>
+        <el-button @click="getUserFragments(auth)">req</el-button>
+    </template>
 </template>
 
 <style>

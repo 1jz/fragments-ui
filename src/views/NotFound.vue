@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import StdContainer from "../components/StdContainer.vue";
 
 const route = useRoute();
 const path = ref(route.path);
 </script>
 
 <template>
-    <StdContainer class="center">
+    <el-container class="center">
         <h1>{{ path }} does not exist.</h1>
-    </StdContainer>
+    </el-container>
 </template>
 
 <style>

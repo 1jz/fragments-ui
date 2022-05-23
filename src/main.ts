@@ -9,14 +9,17 @@ import amplify_conf from "@/assets/amplify-conf";
 import { useAuthenticator } from "@aws-amplify/ui-vue";
 import { globalUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
-
+import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import { Hub } from "aws-amplify";
 
 // Configure our Auth object to use our Cognito User Pool
 Amplify.configure(amplify_conf);
 
 const app = createApp(App);
-app.use(ElementPlus, { size: "small" });
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component);
+}
+app.use(ElementPlus);
 app.use(createPinia());
 app.use(router);
 
@@ -24,6 +27,7 @@ const userStore = globalUserStore();
 const { auth, loginModal } = storeToRefs(userStore);
 
 Hub.listen("auth", async (data) => {
+    console.log("auth", data);
     auth.value = useAuthenticator();
     switch (data.payload.event) {
         case "signIn":
