@@ -2,11 +2,14 @@
 import { globalUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { getUserFragments } from "@/api/api";
+import { getUserFragments, createFragment } from "@/api/api";
+import { ref } from "vue";
 
 const userStore = globalUserStore();
 const { auth, loginModal } = storeToRefs(userStore);
 const router = useRouter();
+
+const input = ref("");
 
 if (router.currentRoute.value.name === "login") {
     if (auth.value.authStatus === "unauthenticated") loginModal.value = true;
@@ -18,7 +21,13 @@ if (router.currentRoute.value.name === "login") {
     <h1>Home</h1>
     <template v-if="auth.authStatus === 'authenticated'">
         <h1>Hello {{ auth.user.username }}!</h1>
-        <el-button @click="getUserFragments(auth)">req</el-button>
+        <el-button @click="getUserFragments(auth.user.signInUserSession.idToken.jwtToken)">
+            req
+        </el-button>
+        <el-input v-model="input" placeholder="Please input" clearable />
+        <el-button @click="createFragment(auth.user.signInUserSession.idToken.jwtToken, input, 'text/plain')">
+            add fragment
+        </el-button>
     </template>
 </template>
 

@@ -5,17 +5,11 @@ import { storeToRefs } from "pinia";
 import { Auth } from "aws-amplify";
 import { Authenticator } from "@aws-amplify/ui-vue";
 import "@aws-amplify/ui-vue/styles.css";
-import { getUserFragments } from "./api/api";
-import { doubleRaf } from "./utils/utils";
 
 const userStore = globalUserStore();
 const { auth, loginModal } = storeToRefs(userStore);
 
 // ======= OTHER CONF =======
-
-doubleRaf(() => {
-    getUserFragments(auth.value);
-});
 
 const router = useRouter();
 const handleSelect = (key: string) => {
