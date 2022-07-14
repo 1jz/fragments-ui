@@ -27,44 +27,44 @@ const handleSelect = (key: string) => {
 
 <template>
     <el-container class="layout-container" style="height: 100vh">
-        <el-aside class="sidebar" width="200px">
-            <el-scrollbar>
-                <el-menu @select="handleSelect" :ellipsis="false">
-                    <el-menu-item index="home">
-                        <el-icon><HomeFilled /></el-icon>
-                        <span>Home</span>
-                    </el-menu-item>
-                </el-menu>
-            </el-scrollbar>
-        </el-aside>
-
-        <el-container>
-            <el-header>
-                <div class="toolbar">
-                    <template v-if="auth.authStatus !== 'authenticated'">
-                        <el-button type="success" plain @click="handleSelect('login')">
-                            Login
-                        </el-button>
-                    </template>
-                    <template v-if="auth.authStatus === 'authenticated'">
-                        <el-dropdown split-button type="primary">
-                            {{ auth.user.username }}
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item @click="handleSelect('logout')"
-                                        >Logout</el-dropdown-item
-                                    >
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </template>
-                </div>
-            </el-header>
-
-            <el-main>
-                <RouterView />
-            </el-main>
-        </el-container>
+        <el-header>
+            <el-menu mode="horizontal" @select="handleSelect" :ellipsis="false">
+                <el-menu-item index="home">
+                    <el-icon><HomeFilled /></el-icon>
+                    <span>Home</span>
+                </el-menu-item>
+                <el-menu-item index="view_fragments">
+                    <el-icon><Document /></el-icon>
+                    <span>View Fragments</span>
+                </el-menu-item>
+                <el-menu-item index="add_fragments">
+                    <el-icon><DocumentAdd /></el-icon>
+                    <span>Add Fragments</span>
+                </el-menu-item>
+            </el-menu>
+            <div class="toolbar">
+                <template v-if="auth.authStatus !== 'authenticated'">
+                    <el-button type="success" plain @click="handleSelect('login')">
+                        Login
+                    </el-button>
+                </template>
+                <template v-if="auth.authStatus === 'authenticated'">
+                    <el-dropdown split-button type="primary">
+                        {{ auth.user.username }}
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item @click="handleSelect('logout')"
+                                    >Logout</el-dropdown-item
+                                >
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </template>
+            </div>
+        </el-header>
+        <el-main>
+            <RouterView />
+        </el-main>
     </el-container>
 
     <el-dialog v-model="loginModal" width="fit-content" title="Login" center>
@@ -77,19 +77,22 @@ const handleSelect = (key: string) => {
 <style>
 @import "@/assets/base.css";
 
-.sidebar {
-    border-right: solid 1px var(--el-menu-border-color);
+ul.el-menu {
+    border: unset;
+    width: fit-content;
+    display: inline-block;
 }
 
-ul.el-menu {
-    border-right: unset;
+.toolbar {
+    width: fit-content;
+    display: inline-block;
 }
 
 header.el-header {
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     display: flex;
-    align-items: end;
+    align-items: center;
+    border-bottom: solid 1px var(--el-menu-border-color);
 }
 
 .layout-container {

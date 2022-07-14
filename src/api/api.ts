@@ -7,18 +7,24 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
  * to have an `idToken` attached, so we can send that along with the request.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getUserFragments = async (token: string) => {
+export const getUserFragments = async (token: string, expand_results = false) => {
     try {
-        const res = await fetch(`${apiUrl}/v1/fragments`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const expand = expand_results ? "true" : "false";
+        const res = await fetch(
+            `${apiUrl}/v1/fragments?${new URLSearchParams({
+                expand: expand,
+            })}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         if (!res.ok) {
             throw new Error(`${res.status} ${res.statusText}`);
         }
         const body = await res.json();
-        console.log("Got user fragments data", { body });
+        return body;
     } catch (err) {
         console.error("Unable to call GET /v1/fragment", { err });
     }

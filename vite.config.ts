@@ -5,10 +5,23 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [
+        vue({
+            include: [/\.vue$/, /\.md$/],
+            template: {
+                compilerOptions: {
+                    isCustomElement: (tag) => tag.startsWith("amplify-"),
+                    sourceMap: true,
+                },
+            },
+        }),
+    ],
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
+            "./runtimeConfig": "./runtimeConfig.browser",
+            find: "./runtimeConfig",
+            replacement: "./runtimeConfig.browser",
         },
     },
     server: {
