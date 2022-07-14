@@ -61,3 +61,8 @@ jobs:
                   push: true
                   # Use 3 tags :sha, :main, and :latest
                   tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest
+                  cache-from: |
+                    type=gha,scope=base
+                  cache-to: |
+                    type=gha,scope=base
+                  target: base
