@@ -21,7 +21,7 @@ FROM base AS builder
 COPY . .
 
 # Build the site to build/
-CMD npm run build
+CMD ["npm", "run", "build"]
 
 ########################################################################
 
