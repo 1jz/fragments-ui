@@ -21,7 +21,7 @@ FROM base AS builder
 COPY . .
 
 # Build the site to build/
-RUN ["npm", "run", "build"]
+CMD ["npm", "run", "build"]
 
 ########################################################################
 
@@ -29,7 +29,8 @@ RUN ["npm", "run", "build"]
 FROM nginx:stable-alpine@sha256:74694f2de64c44787a81f0554aa45b281e468c0c58b8665fafceda624d31e556 AS deploy
 
 # Put our build/ into /usr/share/nginx/html/ and host static files
-COPY --from=builder /app/dist/ /usr/share/nginx/html/
+RUN mkdir -p /usr/share/nginx/html/
+COPY --from=builder ./app/dist/ /usr/share/nginx/html/
 
 EXPOSE 80
 
