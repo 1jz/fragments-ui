@@ -1,6 +1,6 @@
 // src/api.ts
 // fragments microservice API, defaults to localhost:8080
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const apiUrl = "http://localhost:8080";
 /**
  * Given an authenticated user, request all fragments for this user from the
  * fragments microservice (currently only running locally). We expect a user
@@ -30,10 +30,10 @@ export const getUserFragments = async (token: string, expand_results = false) =>
     }
 };
 
-export const getFragmentById = async (token: string, id: string) => {
+export const getFragmentById = async (token: string, id: string, ext = "") => {
     try {
         console.log(token);
-        const res = await fetch(`${apiUrl}/v1/fragments/${id}`, {
+        const res = await fetch(`${apiUrl}/v1/fragments/${id}${ext != "" ? "." + ext : ""}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -41,8 +41,7 @@ export const getFragmentById = async (token: string, id: string) => {
         if (!res.ok) {
             throw new Error(`${res.status} ${res.statusText}`);
         }
-        const body = await res.json();
-        console.log("Got fragment data", { body });
+        return res;
     } catch (err) {
         console.error(`Unable to call GET /v1/fragment/${id}`, { err });
     }
@@ -52,6 +51,27 @@ export const createFragment = async (token: string, data: string, type: string) 
     try {
         const res = await fetch(`${apiUrl}/v1/fragments/`, {
             method: "POST",
+            body: data,
+            headers: {
+                "Content-Type": type,
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (!res.ok) {
+            throw new Error(`${res.status} ${res.statusText}`);
+        }
+        const body = await res.json();
+        console.log("Created new fragment", body);
+    } catch (err) {
+        console.error(err);
+        console.error("Unable to call POST /v1/fragment", { err });
+    }
+};
+
+export const updateFragment = async (token: string, data: string, type: string, id: string) => {
+    try {
+        const res = await fetch(`${apiUrl}/v1/fragments/${id}`, {
+            method: "PUT",
             body: data,
             headers: {
                 "Content-Type": type,
